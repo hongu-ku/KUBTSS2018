@@ -293,7 +293,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 //        });
 
         if (mCloudLoggerService == null) {
-            url = "http://yukiku.php.xdomain.jp/birdman/writer.php";
+            url = "http://yukiku.php.xdomain.jp/controller.php";
             mCloudLoggerService = new CloudLoggerService(url);
         }
         mCloudLoggerAdapter = new CloudLoggerAdapter(mSensorAdapter,mReceivedDataAdapter,mCloudLoggerService);
