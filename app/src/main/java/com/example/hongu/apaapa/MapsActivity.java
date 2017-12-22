@@ -1,4 +1,4 @@
-﻿package com.example.hongu.apaapa;
+package com.example.hongu.apaapa;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -83,7 +83,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private GoogleMap mMap;
     private GoogleApiClient mGoogeleApiClient;
 
-    //test
     //    ここはKUBTSS2017_textの内容
     private static final String TAG = MapsActivity.class.getSimpleName();
     private ReceivedDataAdapter mReceivedDataAdapter;
