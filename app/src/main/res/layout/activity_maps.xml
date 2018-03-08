@@ -231,10 +231,10 @@
         android:weightSum="1">
 
         <view
+            android:id="@+id/view5"
+            class="com.example.hongu.apaapa.TestView"
             android:layout_width="324dp"
             android:layout_height="405dp"
-            class="com.example.hongu.apaapa.TestView"
-            android:id="@+id/view5"
             android:layout_marginLeft="109dp"
             android:layout_marginTop="390dp"
             android:layout_weight="0.04" />
