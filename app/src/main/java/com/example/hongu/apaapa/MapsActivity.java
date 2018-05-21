@@ -79,7 +79,9 @@ import java.util.jar.Manifest;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, ConnectionCallbacks , OnConnectionFailedListener,
         LocationListener, SensorEventListener {
-
+//      TODO: 出力計追加によるパラメータの変更
+// 　　　TODO: blutooth非接続時の処理
+// 　　　TODO:回転数の読み上げ？
 //    private GoogleMap mMap;
 //    private GoogleApiClient mGoogeleApiClient;
 
