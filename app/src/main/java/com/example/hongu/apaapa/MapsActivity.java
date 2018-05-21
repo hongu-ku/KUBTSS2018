@@ -200,7 +200,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 //        atmLapse = Double.parseDouble(lapseStr);
 //        atmStandard = Double.parseDouble(standardStr);
 
-//        mTextSensorViewThread.setPressureParam(atmStandard, atmLapse);
+        mTextSensorViewThread.setPressureParam(atmStandard, atmLapse);
         Log.d(TAG, "onResume");
     }
 
@@ -297,8 +297,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         //  sound = new Sound(getApplicationContext(), R.drawable.warn05);
 
-//        mTextSensorViewThread = new TextSensorViewThread(mSensorAdapter, mReceivedDataAdapter);
-//        mTextSensorViewThread.start();
+        mTextSensorViewThread = new TextSensorViewThread(mSensorAdapter, mReceivedDataAdapter);
+        mTextSensorViewThread.start();
         mReceivedDataAdapter.setReconnection(true);
 //        Switch connectSwitch = (Switch) findViewById(R.id.reConnectSwitch);
 //        connectSwitch.setOnCheckedChangeListener(new Switch.OnCheckedChangeListener() {
@@ -557,152 +557,151 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 //    }
 
 
-//    private class TextSensorViewThread extends Thread {
-//        SensorAdapter mSensorAdapter;
-//        ReceivedDataAdapter mReceivedDataAdapter;
-//        Handler handler = new Handler(Looper.getMainLooper());
-//
-//        private TextView txtStatus, txtSelector;
-//        GraphView speed = (GraphView) findViewById(R.id.speed);
-//        GraphView rpm = (GraphView) findViewById(R.id.rpm);
-//        GraphView ult = (GraphView) findViewById(R.id.ult);
-//        TextView elevator = (TextView) findViewById(R.id.elevator);
-//        TextView rudder = (TextView) findViewById(R.id.rudder);
-//        TextView trim = (TextView) findViewById(R.id.trim);
-//
-//
-//        private boolean running = true;
-//
-//        private double atmStandard, atmLapse;
-//    }
+    private class TextSensorViewThread extends Thread {
+        SensorAdapter mSensorAdapter;
+        ReceivedDataAdapter mReceivedDataAdapter;
+        Handler handler = new Handler(Looper.getMainLooper());
 
-//        public TextSensorViewThread(SensorAdapter mSensorAdapter, ReceivedDataAdapter mReceivedDataAdapter) {
-//            this.mSensorAdapter = mSensorAdapter;
-//            this.mReceivedDataAdapter = mReceivedDataAdapter;
-//
-//            txtStatus = (TextView) findViewById(R.id.textViewStatus);
-//        }
-//
-//        public void start() {
-//            new Thread(this).start();
-//            System.out.println("start");
-//        }
-//
-//        public void stopRunning() {
-//            running = false;
-//        }
-//
-//        public void setPressureParam(double atmStandard, double atmLapse) {
-//            this.atmStandard = atmStandard;
-//            this.atmLapse = atmLapse;
-//        }
-//
-//        @Override
-//        public void run() {
-//            System.out.println("TextSensorViewthread Start");
-//            try {
-//                Thread.sleep(100);
-//                System.out.println("1234567890");
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//            while (running) {
-//                handler.post(new Runnable() {
-//                    @Override
-//                    public void run() {
-//
-//                        speed.setV(mReceivedDataAdapter.getAirspeed());
-//                        rpm.setV(mReceivedDataAdapter.getCadence());
-//                        ult.setV(mReceivedDataAdapter.getUltsonic());
-//                        speed.invalidate();
-//                        rpm.invalidate();
-//                        ult.invalidate();
-//
-//                        elevator.setText("Elev: " + String.format("%.2f", mReceivedDataAdapter.getElevator()));//水平サーボの舵角
-//                        rudder.setText("Rud: " +String.format("%.2f", mReceivedDataAdapter.getRudder()));//垂直サーボの舵角
-//                        trim.setText("Trim: " +String.valueOf(mReceivedDataAdapter.getTrim()));//elevatorの舵角(ボタン)
-////                〇      txtAirspeed.setText(String.format("%.2f", mReceivedDataAdapter.getAirspeed()) + "m/s");//気速
-////                        txtCadence.setTextSize(100.0f);
-////                〇        txtCadence.setText(String.format("%.2f", mReceivedDataAdapter.getCadence()) + "RPM");//足元回転数
-////                〇        txtUltsonic.setText(String.format("%.2f", mReceivedDataAdapter.getUltsonic()));//超音波(200cmまで)
-////                        txtAtmpress.setText(String.format("%.2f", mReceivedDataAdapter.getAtmpress()));//気圧(hPa)
-//                        double altitude = -(mReceivedDataAdapter.getAtmpress() - atmStandard) / atmLapse;
-////                        txtAltitude.setText(String.format("%.2f", altitude));
-//                        switch (mReceivedDataAdapter.getState()) {
-//                            case BluetoothChatService.STATE_CONNECTED:
-//                                txtStatus.setText("Connected");
-//                                break;
-//                            case BluetoothChatService.STATE_CONNECTING:
-//                                txtStatus.setText("Connecting...");
-//                                break;
-//                            case BluetoothChatService.STATE_LISTEN:
-//                                txtStatus.setText("Listen");
-//                                break;
-//                            case BluetoothChatService.STATE_NONE:
-//                                txtStatus.setText("None");
-//                                break;
-//                        }
-////                        txtSelector.setText(String.valueOf(mReceivedDataAdapter.getSelector()));
-////                        txtCadencevolt.setText(String.valueOf(mReceivedDataAdapter.getCadencevolt()));
-////                        txtUltsonicvolt.setText(String.valueOf(mReceivedDataAdapter.getUltsonicvolt()));
-////                        txtServovolt.setText(String.valueOf(mReceivedDataAdapter.getServovolt()));
-//
-//
-//                        //sound.set(mSensorAdapter.getRoll(), 40, 60);
-//                    }
-//                });
-//                try {
-//                    Thread.sleep(200);
-//                } catch (InterruptedException e) {
-//                    Log.e(TAG, "ReConnectThread exception");
-//                } catch (Exception e) {
-//                    System.out.println(e);
-//                }
-//            }
-//        }
-//    }
+        private TextView txtStatus, txtSelector;
+        GraphView speed = (GraphView) findViewById(R.id.speed);
+        GraphView rpm = (GraphView) findViewById(R.id.rpm);
+        GraphView ult = (GraphView) findViewById(R.id.ult);
+        TextView elevator = (TextView) findViewById(R.id.elevator);
+        TextView rudder = (TextView) findViewById(R.id.rudder);
+        TextView trim = (TextView) findViewById(R.id.trim);
 
-//    private class CloudLoggerSendThread extends Thread{
-//        CloudLoggerService mCloudLoggerService;
-//        Handler handler = new Handler();
-//        private boolean running = true;
-//        public CloudLoggerSendThread(CloudLoggerService mCloudLoggerService){
-//            this.mCloudLoggerService = mCloudLoggerService;
-//        }
-//        public void start(){
-//            new Thread(this).start();
-//        }
-//        public void stopRunning() {
-//            running = false;
-//        }
-//        @Override
-//        public void run(){
-//            while(running) {
-//                while (i != 0) {
-//                    // TODO: EXEPTION !!!
-//
-//                    try {
-//                        mCloudLoggerAdapter.setPitchneu(Pitchneu);
-//                        mCloudLoggerService.send();
-//                    } catch (Exception e) {
-//                        e.printStackTrace();
-//                    }
-//
-//                    try {
-//                        Thread.sleep(600);
-//                    } catch (InterruptedException e) {
-//                        Log.e(TAG, "CloudLoggerSendThread exception");
-//                    }
-//                }
-//                try {
-//                    Thread.sleep(1000);
-//                } catch (InterruptedException e) {
-//                    Log.e(TAG, "CloudLoggerSendThread exception");
-//                }
-//            }
-//        }
-//
-//    }
+
+        private boolean running = true;
+
+        private double atmStandard, atmLapse;
+
+        public TextSensorViewThread(SensorAdapter mSensorAdapter, ReceivedDataAdapter mReceivedDataAdapter) {
+            this.mSensorAdapter = mSensorAdapter;
+            this.mReceivedDataAdapter = mReceivedDataAdapter;
+
+            txtStatus = (TextView) findViewById(R.id.textViewStatus);
+        }
+
+        public void start() {
+            new Thread(this).start();
+            System.out.println("start");
+        }
+
+        public void stopRunning() {
+            running = false;
+        }
+
+        public void setPressureParam(double atmStandard, double atmLapse) {
+            this.atmStandard = atmStandard;
+            this.atmLapse = atmLapse;
+        }
+
+        @Override
+        public void run() {
+            System.out.println("TextSensorViewthread Start");
+            try {
+                Thread.sleep(100);
+                System.out.println("1234567890");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            while (running) {
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        speed.setV(mReceivedDataAdapter.getAirspeed());
+                        rpm.setV(mReceivedDataAdapter.getCadence());
+                        ult.setV(mReceivedDataAdapter.getUltsonic());
+                        speed.invalidate();
+                        rpm.invalidate();
+                        ult.invalidate();
+
+                        elevator.setText("Elev: " + String.format("%.2f", mReceivedDataAdapter.getElevator()));//水平サーボの舵角
+                        rudder.setText("Rud: " +String.format("%.2f", mReceivedDataAdapter.getRudder()));//垂直サーボの舵角
+                        trim.setText("Trim: " +String.valueOf(mReceivedDataAdapter.getTrim()));//elevatorの舵角(ボタン)
+//                〇      txtAirspeed.setText(String.format("%.2f", mReceivedDataAdapter.getAirspeed()) + "m/s");//気速
+//                        txtCadence.setTextSize(100.0f);
+//                〇        txtCadence.setText(String.format("%.2f", mReceivedDataAdapter.getCadence()) + "RPM");//足元回転数
+//                〇        txtUltsonic.setText(String.format("%.2f", mReceivedDataAdapter.getUltsonic()));//超音波(200cmまで)
+//                        txtAtmpress.setText(String.format("%.2f", mReceivedDataAdapter.getAtmpress()));//気圧(hPa)
+                        double altitude = -(mReceivedDataAdapter.getAtmpress() - atmStandard) / atmLapse;
+//                        txtAltitude.setText(String.format("%.2f", altitude));
+                        switch (mReceivedDataAdapter.getState()) {
+                            case BluetoothChatService.STATE_CONNECTED:
+                                txtStatus.setText("Connected");
+                                break;
+                            case BluetoothChatService.STATE_CONNECTING:
+                                txtStatus.setText("Connecting...");
+                                break;
+                            case BluetoothChatService.STATE_LISTEN:
+                                txtStatus.setText("Listen");
+                                break;
+                            case BluetoothChatService.STATE_NONE:
+                                txtStatus.setText("None");
+                                break;
+                        }
+//                        txtSelector.setText(String.valueOf(mReceivedDataAdapter.getSelector()));
+//                        txtCadencevolt.setText(String.valueOf(mReceivedDataAdapter.getCadencevolt()));
+//                        txtUltsonicvolt.setText(String.valueOf(mReceivedDataAdapter.getUltsonicvolt()));
+//                        txtServovolt.setText(String.valueOf(mReceivedDataAdapter.getServovolt()));
+
+
+                        //sound.set(mSensorAdapter.getRoll(), 40, 60);
+                    }
+                });
+                try {
+                    Thread.sleep(200);
+                } catch (InterruptedException e) {
+                    Log.e(TAG, "ReConnectThread exception");
+                } catch (Exception e) {
+                    System.out.println(e);
+                }
+            }
+        }
+    }
+
+    private class CloudLoggerSendThread extends Thread{
+        CloudLoggerService mCloudLoggerService;
+        Handler handler = new Handler();
+        private boolean running = true;
+        public CloudLoggerSendThread(CloudLoggerService mCloudLoggerService){
+            this.mCloudLoggerService = mCloudLoggerService;
+        }
+        public void start(){
+            new Thread(this).start();
+        }
+        public void stopRunning() {
+            running = false;
+        }
+        @Override
+        public void run(){
+            while(running) {
+                while (i != 0) {
+                    // TODO: EXEPTION !!!
+
+                    try {
+                        mCloudLoggerAdapter.setPitchneu(Pitchneu);
+                        mCloudLoggerService.send();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                    try {
+                        Thread.sleep(600);
+                    } catch (InterruptedException e) {
+                        Log.e(TAG, "CloudLoggerSendThread exception");
+                    }
+                }
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    Log.e(TAG, "CloudLoggerSendThread exception");
+                }
+            }
+        }
+
+    }
 
     private float rad2deg( float rad ) {
         return rad * (float) 180.0 / (float) Math.PI;
