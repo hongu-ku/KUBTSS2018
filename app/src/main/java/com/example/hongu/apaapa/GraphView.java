@@ -87,8 +87,9 @@ public class GraphView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        canvas.scale(0.7f,0.7f);
-        canvas.translate(10, 30);
+//        canvas.scale(0.7f,0.7f); // 2017dtab用
+        canvas.scale(1.5f,1.5f);
+//        canvas.translate(10, 30); // 2017dtab用
         this.drawText(canvas, v);
        // this.drawOption(canvas);
        // this.drawGraph(v, canvas);

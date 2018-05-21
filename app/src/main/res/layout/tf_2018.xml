@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:sample="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="180dp"
+        android:layout_marginTop="20dp">
+
+        <com.example.hongu.apaapa.GraphView
+            android:layout_width="190dp"
+            android:layout_height="wrap_content"
+            class="com.example.hongu.apaapa.GraphView"
+            android:id="@+id/rpm"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            sample:x0= "50"
+            sample:y0= "100"
+            sample:vmin= "0"
+            sample:vmax= "150"
+            sample:unit= "RPM"
+            sample:title= "Cadence"
+            sample:type="0">
+        </com.example.hongu.apaapa.GraphView>
+
+        <com.example.hongu.apaapa.GraphView
+            android:layout_width="190dp"
+            android:layout_height="wrap_content"
+            class="com.example.hongu.apaapa.GraphView"
+            android:id="@+id/ult"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            sample:x0= "50"
+            sample:y0= "100"
+            sample:vmin= "0"
+            sample:vmax= "20"
+            sample:unit= "cm"
+            sample:title= "Ultsonic"
+            sample:type="0">
+        </com.example.hongu.apaapa.GraphView>
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="182dp">
+
+        <com.example.hongu.apaapa.GraphView
+            android:layout_width="190dp"
+            android:layout_height="wrap_content"
+            class="com.example.hongu.apaapa.GraphView"
+            android:id="@+id/speed"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            sample:x0= "50"
+            sample:y0= "100"
+            sample:vmin= "0"
+            sample:vmax= "100"
+            sample:unit= "m/s"
+            sample:title= "機速"
+            sample:type="1">
+        </com.example.hongu.apaapa.GraphView>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:text="elev:"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="20dp"
+                android:textColor="@color/black"
+                android:id="@+id/elevator"
+                android:layout_weight="1" />
+
+            <TextView
+                android:text="rud:"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="20dp"
+                android:id="@+id/rudder"
+                android:textColor="@color/black"
+                android:layout_marginTop="8dp"
+                android:layout_weight="1" />
+
+            <TextView
+                android:text="trim:"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="20dp"
+                android:id="@+id/trim"
+                android:textColor="@color/black"
+                android:layout_marginTop="8dp"
+                android:layout_weight="1" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:orientation="horizontal">
+
+        <com.example.hongu.apaapa.GraphView
+            android:id="@+id/power"
+            class="com.example.hongu.apaapa.GraphView"
+            android:layout_width="190dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            sample:title="出力"
+            sample:type="1"
+            sample:unit="W"
+            sample:vmax="400"
+            sample:vmin="0"
+            sample:x0="50"
+            sample:y0="100"></com.example.hongu.apaapa.GraphView>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:id="@+id/textViewStatus" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:baselineAligned="false">
+
+        <Button
+            android:text="Start"
+            android:layout_width="200dp"
+            android:layout_height="60dp"
+            android:textSize="25dp"
+            android:id="@+id/startbtn" />
+
+        <NumberPicker
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/numberPicker"
+            android:textSize="80dp"
+            android:layout_weight="1" />
+
+    </LinearLayout>
+</LinearLayout>

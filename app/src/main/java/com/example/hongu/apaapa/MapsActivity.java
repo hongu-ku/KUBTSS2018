@@ -80,8 +80,8 @@ import java.util.jar.Manifest;
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, ConnectionCallbacks , OnConnectionFailedListener,
         LocationListener, SensorEventListener {
 
-    private GoogleMap mMap;
-    private GoogleApiClient mGoogeleApiClient;
+//    private GoogleMap mMap;
+//    private GoogleApiClient mGoogeleApiClient;
 
     //    ここはKUBTSS2017_textの内容
     private static final String TAG = MapsActivity.class.getSimpleName();
@@ -134,7 +134,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     float[] gravity = new float[3];
     float[] geomagnetic = new float[3];
     float[] attitude = new float[3];
-    TestView testView;
+//    TestView testView;
     LatLng latlng;
     LatLng Platform = new LatLng(35.294170,136.254422);
     CircleOptions circleOptions;
@@ -186,7 +186,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     protected void onResume() {
         super.onResume();
-        mGoogeleApiClient.connect();
+//        mGoogeleApiClient.connect();
         sensorManager.registerListener( this, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_GAME);
         sensorManager.registerListener( this, sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD), SensorManager.SENSOR_DELAY_GAME);
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(MapsActivity.this);
@@ -231,14 +231,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         System.out.println("create");
-        setContentView(R.layout.activity_maps);
+        setContentView(R.layout.tf_2018);
         initSensor();
-        testView = (TestView) findViewById(R.id.view5);
-        final DirectionView directionView = (DirectionView) findViewById(R.id.direction);
-        final TextView disText = (TextView) findViewById(R.id.textview);
-        final TextView straightText = (TextView) findViewById(R.id.textview1);
-        disText.setTextColor(Color.RED);
-        straightText.setTextColor(Color.RED);
+        // 機体の向きを見せるview
+//        testView = (TestView) findViewById(R.id.view5);
+//        final DirectionView directionView = (DirectionView) findViewById(R.id.direction);
+//        final TextView disText = (TextView) findViewById(R.id.textview);
+//        final TextView straightText = (TextView) findViewById(R.id.textview1);
+//        disText.setTextColor(Color.RED);
+//        straightText.setTextColor(Color.RED);
         // NumberPicker 設定
         final NumberPicker numberPicker = (NumberPicker)findViewById(R.id.numberPicker);
         numberPicker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
@@ -253,24 +254,24 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);  // スリープ抑制
 
-        mGoogeleApiClient = new GoogleApiClient.Builder(this)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(LocationServices.API)
-                .build();
+//        mGoogeleApiClient = new GoogleApiClient.Builder(this)
+//                .addConnectionCallbacks(this)
+//                .addOnConnectionFailedListener(this)
+//                .addApi(LocationServices.API)
+//                .build();
 
 
 
-        if (Build.VERSION.SDK_INT >= 19) {
-            Log.i(TAG, "getExternalFilesDirを呼び出します");
-            File[] extDirs = getExternalFilesDirs(Environment.DIRECTORY_DOWNLOADS);
-            File extSdDir = extDirs[extDirs.length - 1];
-            Logger.setExternalDir(extSdDir);
-            Log.i(TAG, "getExternalFilesDirが返すパス: " + extSdDir.getAbsolutePath());
-        }else{
-            Log.e(TAG, "This SDK version is under 18.");
-            finish();
-        }
+//        if (Build.VERSION.SDK_INT >= 19) {
+//            Log.i(TAG, "getExternalFilesDirを呼び出します");
+//            File[] extDirs = getExternalFilesDirs(Environment.DIRECTORY_DOWNLOADS);
+//            File extSdDir = extDirs[extDirs.length - 1];
+//            Logger.setExternalDir(extSdDir);
+//            Log.i(TAG, "getExternalFilesDirが返すパス: " + extSdDir.getAbsolutePath());
+//        }else{
+//            Log.e(TAG, "This SDK version is under 18.");
+//            finish();
+//        }
 
        mReceivedDataAdapter = new ReceivedDataAdapter(getBaseContext());
 
@@ -306,9 +307,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         System.out.println("ok");
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
+//        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+//                .findFragmentById(R.id.map);
+//        mapFragment.getMapAsync(this);
 
         final Button startbtn = (Button) findViewById(R.id.startbtn);
 
@@ -339,7 +340,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     f++;
                     i=val;
                     //val = numberPicker.getValue();
-                    // TODO: NumberPickerの廃止
                     mCloudLoggerAdapter.setCount(val);
                     startbtn.setText("STOP");
                     Toast.makeText(getApplicationContext(),""+val, Toast.LENGTH_SHORT).show();
@@ -354,8 +354,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     val++;
                     numberPicker.setValue(val);
                     startbtn.setText("START");
-                    disText.setText("Distance:");
-                    straightText.setText("Straight:");
+//                    disText.setText("Distance:");
+//                    straightText.setText("Straight:");
                 }
             }
         });
@@ -366,137 +366,137 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         for (int i = 0; i < 3; i++)
             save[i] = 0;
 
-        mSensorEventListener = new SensorEventListener()
-        {
-            public void onSensorChanged (SensorEvent event) {
-                // センサの取得値をそれぞれ保存しておく
-//                switch( event.sensor.getType()) {
-//                    case Sensor.TYPE_ACCELEROMETER:
-//                        fAccell = event.values.clone();
-//                        break;
-//                    case Sensor.TYPE_MAGNETIC_FIELD:
-//                        fMagnetic = event.values.clone();
-//                        break;
-//                }
-
-                // fAccell と fMagnetic から傾きと方位角を計算する
-                //if( fAccell != null && fMagnetic != null ) {
-//                    // 回転行列を得る
-//                    float[] inR = new float[9];
+//        mSensorEventListener = new SensorEventListener()
+//        {
+//            public void onSensorChanged (SensorEvent event) {
+//                // センサの取得値をそれぞれ保存しておく
+////                switch( event.sensor.getType()) {
+////                    case Sensor.TYPE_ACCELEROMETER:
+////                        fAccell = event.values.clone();
+////                        break;
+////                    case Sensor.TYPE_MAGNETIC_FIELD:
+////                        fMagnetic = event.values.clone();
+////                        break;
+////                }
 //
-//                    float deg = testView.getPitch1();
-//                    double rad = Math.toRadians(deg);
+//                // fAccell と fMagnetic から傾きと方位角を計算する
+//                //if( fAccell != null && fMagnetic != null ) {
+////                    // 回転行列を得る
+////                    float[] inR = new float[9];
+////
+////                    float deg = testView.getPitch1();
+////                    double rad = Math.toRadians(deg);
+////
+////                    float sin = (float) Math.sin(rad);
+////                    float cos = (float) Math.cos(rad);
+////
+////                    rot[0] = 1;
+////                    rot[1] = 0;
+////                    rot[2] = 0;
+////                    rot[3] = 0;
+////                    rot[4] = cos;
+////                    rot[5] = -sin;
+////                    rot[6] = 0;
+////                    rot[7] = sin;
+////                    rot[8] = cos;
+////
+////
+////
+////                    SensorManager.getRotationMatrix(
+////                            inR,
+////                            null,
+////                            fAccell,
+////                            fMagnetic );
+////
+////                    float[] ininR = new float[9];
+////
+////                    // ワールド座標とデバイス座標のマッピングを変換する
+////                    float[] outR = new float[9];
+////                    SensorManager.remapCoordinateSystem(
+////                            inR,
+////                            SensorManager.AXIS_X,  // デバイスx軸が地球の何軸になるか
+////                            SensorManager.AXIS_Z,  // デバイスy軸が地球の何軸になるか
+////                            outR );
+////                    // 姿勢を得る
+////                    // 回転行列をoutRにかける
+////                    MatrixMultiply(outR, rot, 3, ininR);
 //
-//                    float sin = (float) Math.sin(rad);
-//                    float cos = (float) Math.cos(rad);
+//                    SensorManager.getOrientation(
+//                            mSensorAdapter.getIninR(),
+//                            fAttitude );
 //
-//                    rot[0] = 1;
-//                    rot[1] = 0;
-//                    rot[2] = 0;
-//                    rot[3] = 0;
-//                    rot[4] = cos;
-//                    rot[5] = -sin;
-//                    rot[6] = 0;
-//                    rot[7] = sin;
-//                    rot[8] = cos;
+//                   SensorManager.getOrientation(
+//                            mSensorAdapter.getOutR(),
+//                            oridinalAttitude );
 //
 //
+////                    String buf =
+////                            "---------- Orientation --------\n" +
+////                                    String.format( "方位角\n\t%f\n", rad2deg( fAttitude[0] )) +
+////                                    String.format( "前後の傾斜\n\t%f\n", rad2deg( fAttitude[1] )) +
+////                                    String.format( "左右の傾斜\n\t%f\n", rad2deg( fAttitude[2] ));
+////
+////                    String buf2 =
+////                            "---------- fAccell --------\n" +
+////                                    String.format( "方位角\n\t%f\n", rad2deg( fAccell[0] )) +
+////                                    String.format( "前後の傾斜\n\t%f\n", rad2deg( fAccell[1] )) +
+////                                    String.format( "左右の傾斜\n\t%f\n", rad2deg( fAccell[2] ));
+////
+////                    String buf3 =
+////                            "---------- fMagnetic --------\n" +
+////                                    String.format( "方位角\n\t%f\n", rad2deg( fMagnetic[0] )) +
+////                                    String.format( "前後の傾斜\n\t%f\n", rad2deg( fMagnetic[1] )) +
+////                                    String.format( "左右の傾斜\n\t%f\n", rad2deg( fMagnetic[2] ));
 //
-//                    SensorManager.getRotationMatrix(
-//                            inR,
-//                            null,
-//                            fAccell,
-//                            fMagnetic );
+////                    setValue(mSensorAdapter.getYaw(), mSensorAdapter.getRoll(), mSensorAdapter.getPitch());
+////                    String bush =
+////                              "---------- Orientation --------\n" +
+////                            String.format( "Yaw:\n\t%f\n", yaw) +
+////                            String.format( "Roll:\n\t%f\n", roll) +
+////                            String.format( "Pitch:\n\t%f\n", pitch);
 //
-//                    float[] ininR = new float[9];
 //
-//                    // ワールド座標とデバイス座標のマッピングを変換する
-//                    float[] outR = new float[9];
-//                    SensorManager.remapCoordinateSystem(
-//                            inR,
-//                            SensorManager.AXIS_X,  // デバイスx軸が地球の何軸になるか
-//                            SensorManager.AXIS_Z,  // デバイスy軸が地球の何軸になるか
-//                            outR );
-//                    // 姿勢を得る
-//                    // 回転行列をoutRにかける
-//                    MatrixMultiply(outR, rot, 3, ininR);
-
-                    SensorManager.getOrientation(
-                            mSensorAdapter.getIninR(),
-                            fAttitude );
-
-                   SensorManager.getOrientation(
-                            mSensorAdapter.getOutR(),
-                            oridinalAttitude );
-
-
-//                    String buf =
-//                            "---------- Orientation --------\n" +
-//                                    String.format( "方位角\n\t%f\n", rad2deg( fAttitude[0] )) +
-//                                    String.format( "前後の傾斜\n\t%f\n", rad2deg( fAttitude[1] )) +
-//                                    String.format( "左右の傾斜\n\t%f\n", rad2deg( fAttitude[2] ));
+//                    //TextView t = (TextView) findViewById( R.id.textview);
+////                    TextView Accell = (TextView) findViewById(R.id.textview1);
+////                    TextView Magnetic = (TextView) findViewById(R.id.textview2);
+//                    //t.setText( buf );
+////                    Accell.setText(buf2);
+////                    Magnetic.setText(buf3);
+//                    //float Yaw = fAttitude[0];
 //
-//                    String buf2 =
-//                            "---------- fAccell --------\n" +
-//                                    String.format( "方位角\n\t%f\n", rad2deg( fAccell[0] )) +
-//                                    String.format( "前後の傾斜\n\t%f\n", rad2deg( fAccell[1] )) +
-//                                    String.format( "左右の傾斜\n\t%f\n", rad2deg( fAccell[2] ));
+//                    // 正面に置く場合
+////                    testView.setYaw(rad2deg( fAttitude[2] ));
+////                    testView.setPitch(rad2deg( fAttitude[1] ));
 //
-//                    String buf3 =
-//                            "---------- fMagnetic --------\n" +
-//                                    String.format( "方位角\n\t%f\n", rad2deg( fMagnetic[0] )) +
-//                                    String.format( "前後の傾斜\n\t%f\n", rad2deg( fMagnetic[1] )) +
-//                                    String.format( "左右の傾斜\n\t%f\n", rad2deg( fMagnetic[2] ));
-
-//                    setValue(mSensorAdapter.getYaw(), mSensorAdapter.getRoll(), mSensorAdapter.getPitch());
-//                    String bush =
-//                              "---------- Orientation --------\n" +
-//                            String.format( "Yaw:\n\t%f\n", yaw) +
-//                            String.format( "Roll:\n\t%f\n", roll) +
-//                            String.format( "Pitch:\n\t%f\n", pitch);
-
-
-                    //TextView t = (TextView) findViewById( R.id.textview);
-//                    TextView Accell = (TextView) findViewById(R.id.textview1);
-//                    TextView Magnetic = (TextView) findViewById(R.id.textview2);
-                    //t.setText( buf );
-//                    Accell.setText(buf2);
-//                    Magnetic.setText(buf3);
-                    //float Yaw = fAttitude[0];
-
-                    // 正面に置く場合
-                    testView.setYaw(rad2deg( fAttitude[2] ));
-                    testView.setPitch(rad2deg( fAttitude[1] ));
-
-//                    // 左に置く場合
-//                    testView.Yaw = -rad2deg( fAttitude[1] );
-//                    testView.Pitch = rad2deg( fAttitude[2] );
-
-//                    System.out.println("testviewはok?");
-                    // 再描画
-                    testView.invalidate();
-                    directionView.setYaw(rad2deg(fAttitude[0]));
-                    directionView.invalidate();
-            }
-            public void onAccuracyChanged (Sensor sensor, int accuracy) {}
-        };
+////                    // 左に置く場合
+////                    testView.Yaw = -rad2deg( fAttitude[1] );
+////                    testView.Pitch = rad2deg( fAttitude[2] );
+//
+////                    System.out.println("testviewはok?");
+//                    // 再描画
+////                    testView.invalidate();
+////                    directionView.setYaw(rad2deg(fAttitude[0]));
+////                    directionView.invalidate();
+//            }
+//            public void onAccuracyChanged (Sensor sensor, int accuracy) {}
+//        };
 
 
-        testView.setOnLongClickListener(new View.OnLongClickListener() {
-            public boolean onLongClick(View v) {
-                //testView.setPitch1(rad2deg(oridinalAttitude[1]));
-                Pitchneu = oridinalAttitude[1];
-                Rollneu = oridinalAttitude[2];
-                mSensorAdapter.setPitchneutral(Pitchneu);
-                // TODO:ロールのニュートラル調整がボタンでできてしまっていいのだろうか
-                mSensorAdapter.setRollneutral(Rollneu);
-                System.out.println("debug " + testView.getPitch1());
-                testView.invalidate();
-                System.out.println("oridinal = " + oridinalAttitude[2]);
-                System.out.println("f = " + fAttitude[2]);
-                return true; //trueの場合はonClickListenerを返さない？
-            }
-        });
+//        testView.setOnLongClickListener(new View.OnLongClickListener() {
+//            public boolean onLongClick(View v) {
+//                //testView.setPitch1(rad2deg(oridinalAttitude[1]));
+//                Pitchneu = oridinalAttitude[1];
+//                Rollneu = oridinalAttitude[2];
+//                mSensorAdapter.setPitchneutral(Pitchneu);
+//                // TODO:ロールのニュートラル調整がボタンでできてしまっていいのだろうか
+//                mSensorAdapter.setRollneutral(Rollneu);
+//                System.out.println("debug " + testView.getPitch1());
+//                testView.invalidate();
+//                System.out.println("oridinal = " + oridinalAttitude[2]);
+//                System.out.println("f = " + fAttitude[2]);
+//                return true; //trueの場合はonClickListenerを返さない？
+//            }
+//        });
     }
 
 //    public void MatrixMultiply(float[] R, float[] L,int sizeR/*正方行列の次元*/, float[] outM) {
@@ -740,30 +740,30 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        mMap = googleMap;
-
-        // 長押しのリスナーをセット
-        mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
-            @Override
-            public void onMapLongClick(LatLng longpushLocation) {
-                try {
-                    // TODO: 長押し時のzoom値の変更
-                    CameraPosition cameraPosition = new CameraPosition.Builder()
-                            .target(latlng).zoom(18).bearing(0).build();
-                    mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-                } catch (NullPointerException e) {
-                    // do nothing
-                    e.printStackTrace();
-                }
-            }
-        });
-
-        // MyLocationレイヤーを有効に
-        mMap.setMyLocationEnabled(true);
-        mMap.addMarker(new MarkerOptions().position(Platform));
-        // MyLocationButtonを有効に
-        UiSettings settings = mMap.getUiSettings();
-        settings.setMyLocationButtonEnabled(true);
+//        mMap = googleMap;
+//
+//        // 長押しのリスナーをセット
+//        mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
+//            @Override
+//            public void onMapLongClick(LatLng longpushLocation) {
+//                try {
+//                    // TODO: 長押し時のzoom値の変更
+//                    CameraPosition cameraPosition = new CameraPosition.Builder()
+//                            .target(latlng).zoom(18).bearing(0).build();
+//                    mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+//                } catch (NullPointerException e) {
+//                    // do nothing
+//                    e.printStackTrace();
+//                }
+//            }
+//        });
+//
+//        // MyLocationレイヤーを有効に
+//        mMap.setMyLocationEnabled(true);
+//        mMap.addMarker(new MarkerOptions().position(Platform));
+//        // MyLocationButtonを有効に
+//        UiSettings settings = mMap.getUiSettings();
+//        settings.setMyLocationButtonEnabled(true);
 //        UiSettings settings = mMap.getUiSettings();
 //
 //        settings.setCompassEnabled(true);
@@ -779,30 +779,30 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 //        settings.setZoomGesturesEnabled(true);
 //
 //        //マップの種類
-        mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+//        mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         //衛星写真
 //        mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
 
-        circleOptions = new CircleOptions()
-        .center(Platform)
-                .radius(10000)
-                .strokeColor(Color.RED)
-                .strokeWidth(4); // In meters
-
-        circleOptions1 = new CircleOptions()
-                .center(Platform)
-                .radius(20000)
-                .strokeColor(Color.RED)
-                .strokeWidth(4); // In meters
-
-        currentCircle = new CircleOptions()
-                .center(Platform)
-                .strokeColor(Color.GREEN)
-                .strokeWidth(4);
+//        circleOptions = new CircleOptions()
+//        .center(Platform)
+//                .radius(10000)
+//                .strokeColor(Color.RED)
+//                .strokeWidth(4); // In meters
+//
+//        circleOptions1 = new CircleOptions()
+//                .center(Platform)
+//                .radius(20000)
+//                .strokeColor(Color.RED)
+//                .strokeWidth(4); // In meters
+//
+//        currentCircle = new CircleOptions()
+//                .center(Platform)
+//                .strokeColor(Color.GREEN)
+//                .strokeWidth(4);
 
 // Get back the mutable Circle
-        mMap.addCircle(circleOptions);
-        mMap.addCircle(circleOptions1);
+//        mMap.addCircle(circleOptions);
+//        mMap.addCircle(circleOptions1);
 
             // DangerousなPermissionはリクエストして許可をもらわないと使えない(Android6以降？)
 //        if (ActivityCompat.checkSelfPermission(this, Manifest.permisson.ACCESS_FINE_LOCATION) !=
@@ -867,7 +867,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-        mFusedLocationProviderApi.requestLocationUpdates(mGoogeleApiClient, REQUEST, (LocationListener) this);
+//        mFusedLocationProviderApi.requestLocationUpdates(mGoogeleApiClient, REQUEST, (LocationListener) this);
     }
 
 
@@ -883,75 +883,75 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     public void onLocationChanged(Location location) {
-        float[] dista = new float[3];
-
-        // Stop後は動かさない
-        if (mStop) {
-            return;
-        }
-
-
-        // マーカー設定
-        mMap.clear();
-        latlng = new LatLng(location.getLatitude(), location.getLongitude());
-        LatLng Chikubu = new LatLng(35.423196, 136.144068);
-        LatLng Oki = new LatLng(35.2079, 136.068244);
-
-        options.position(latlng);
-        // ランチャーアイコン
-        BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.navi);
-        options.icon(icon);
-        mMap.addMarker(options
-                .anchor(0.5f, 0.5f)
-                .rotation(rad2deg( fAttitude[0] ) + 90));
-
-
-        mMap.addCircle(circleOptions);
-        mMap.addCircle(circleOptions1);
-
-        mMap.addMarker(new MarkerOptions().position(Platform));
-
-        if (mStart) {
-            if (mFirst) {
-                // TODO: 初めのzoom値の変更
-                CameraPosition cameraposition = new CameraPosition.Builder()
-                        .target(new LatLng(location.getLatitude(), location.getLongitude())).zoom(18)
-                        .bearing(0).build();
-                mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraposition));
-                Bundle args = new Bundle();
-                args.putDouble("lat", location.getLatitude());
-                args.putDouble("lon", location.getLongitude());
-                System.out.println("debug");
-                System.out.println(location.getLatitude());
-
-                //getLoaderManager().restartLoader(ADDRESSLOADER_ID, args, this);
-                mFirst = !mFirst;
-            } else {
-                //移動線を描画
-                drawTrace(latlng);
-                //走行距離を累積
-                sumDistance();
-
-                // TODO: 竹生島と沖島への直線を描画
-                PolylineOptions OkiOptions = new PolylineOptions()
-                        .add(latlng)
-                        .add(Oki)
-                        .width(4);
-
-                PolylineOptions ChikubuOptions = new PolylineOptions()
-                        .add(latlng)
-                        .add(Chikubu)
-                        .width(4);
-
-                mMap.addPolyline(OkiOptions);
-                mMap.addPolyline(ChikubuOptions);
-
-                Location.distanceBetween(Platform.latitude,Platform.longitude, latlng.latitude, latlng.longitude, dista);
-                currentCircle.radius(dista[0]);
-                mMap.addCircle(currentCircle);
-
-            }
-        }
+//        float[] dista = new float[3];
+//
+//        // Stop後は動かさない
+//        if (mStop) {
+//            return;
+//        }
+//
+//
+//        // マーカー設定
+//        mMap.clear();
+//        latlng = new LatLng(location.getLatitude(), location.getLongitude());
+//        LatLng Chikubu = new LatLng(35.423196, 136.144068);
+//        LatLng Oki = new LatLng(35.2079, 136.068244);
+//
+//        options.position(latlng);
+//        // ランチャーアイコン
+//        BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.navi);
+//        options.icon(icon);
+//        mMap.addMarker(options
+//                .anchor(0.5f, 0.5f)
+//                .rotation(rad2deg( fAttitude[0] ) + 90));
+//
+//
+//        mMap.addCircle(circleOptions);
+//        mMap.addCircle(circleOptions1);
+//
+//        mMap.addMarker(new MarkerOptions().position(Platform));
+//
+//        if (mStart) {
+//            if (mFirst) {
+//                // TODO: 初めのzoom値の変更
+//                CameraPosition cameraposition = new CameraPosition.Builder()
+//                        .target(new LatLng(location.getLatitude(), location.getLongitude())).zoom(18)
+//                        .bearing(0).build();
+//                mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraposition));
+//                Bundle args = new Bundle();
+//                args.putDouble("lat", location.getLatitude());
+//                args.putDouble("lon", location.getLongitude());
+//                System.out.println("debug");
+//                System.out.println(location.getLatitude());
+//
+//                //getLoaderManager().restartLoader(ADDRESSLOADER_ID, args, this);
+//                mFirst = !mFirst;
+//            } else {
+//                //移動線を描画
+//                drawTrace(latlng);
+//                //走行距離を累積
+//                sumDistance();
+//
+//                // TODO: 竹生島と沖島への直線を描画
+//                PolylineOptions OkiOptions = new PolylineOptions()
+//                        .add(latlng)
+//                        .add(Oki)
+//                        .width(4);
+//
+//                PolylineOptions ChikubuOptions = new PolylineOptions()
+//                        .add(latlng)
+//                        .add(Chikubu)
+//                        .width(4);
+//
+//                mMap.addPolyline(OkiOptions);
+//                mMap.addPolyline(ChikubuOptions);
+//
+//                Location.distanceBetween(Platform.latitude,Platform.longitude, latlng.latitude, latlng.longitude, dista);
+//                currentCircle.radius(dista[0]);
+//                mMap.addCircle(currentCircle);
+//
+//            }
+//        }
     }
 
     private void drawTrace(LatLng latlng) {
@@ -964,7 +964,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             polyOptions.color(Color.RED);
             polyOptions.width(3.5f);
             polyOptions.geodesic(false);
-            mMap.addPolyline(polyOptions);
+//            mMap.addPolyline(polyOptions);
         }
     }
 
@@ -994,12 +994,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
         //distanceBetweenの距離はメートル単位
         //double disMeter = mMeter / 1000;
-        TextView DisText = (TextView) findViewById(R.id.textview);
-        TextView StraightText = (TextView) findViewById(R.id.textview1);
-        DisText.setTextColor(Color.RED);
-        StraightText.setTextColor(Color.RED);
-        DisText.setText(String.format("Distance: " + "%.1f" + " m", mMeter));
-        StraightText.setText(String.format("Straight: " + "%.1f" + " m", StraightMeter));
+//        TextView DisText = (TextView) findViewById(R.id.textview);
+//        TextView StraightText = (TextView) findViewById(R.id.textview1);
+//        DisText.setTextColor(Color.RED);
+//        StraightText.setTextColor(Color.RED);
+//        DisText.setText(String.format("Distance: " + "%.1f" + " m", mMeter));
+//        StraightText.setText(String.format("Straight: " + "%.1f" + " m", StraightMeter));
     }
 
     @Override
