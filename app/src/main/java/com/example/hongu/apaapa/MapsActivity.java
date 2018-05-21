@@ -21,11 +21,13 @@ import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.Menu;
@@ -87,7 +89,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private static final String TAG = MapsActivity.class.getSimpleName();
     private ReceivedDataAdapter mReceivedDataAdapter;
     private SensorAdapter mSensorAdapter;
-    private TextSensorViewThread mTextSensorViewThread;//テキスト形式のUI用スレッド
+//    private TextSensorViewThread mTextSensorViewThread;//テキスト形式のUI用スレッド
     //private Sound sound;
     private double atmLapse, atmStandard;
 
@@ -95,7 +97,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private CloudLoggerService mCloudLoggerService = null;
     private CloudLoggerAdapter mCloudLoggerAdapter;
     private InetAddress inetAddress;
-    private CloudLoggerSendThread mCloudLoggerSendThread;
+//    private CloudLoggerSendThread mCloudLoggerSendThread;
 
 
     boolean runflg = true;
@@ -128,9 +130,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private double Kyotolat = 35.025874;
     private double Kyotolnt = 135.780865;
-    SensorManager sensorManager;
+//    SensorManager sensorManager;
     float[] rotationMatrix = new float[9];
-    float[] rot = new float[9];
     float[] gravity = new float[3];
     float[] geomagnetic = new float[3];
     float[] attitude = new float[3];
@@ -150,7 +151,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     double roll,switching,yaw,pitch,ultsonic;
 
-    private SensorManager mSensorManager = null;
+//    private SensorManager mSensorManager = null;
     private SensorEventListener mSensorEventListener = null;
 
     public float[] getfAttitude() {
@@ -166,6 +167,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private float[] fAccell = null;
     private float[] fMagnetic = null;
+
+    private SectionsPageAdapter mSectionsPageAdapter;
+
+    private ViewPager mViewPager;
 
 
     //SubThreadSample[] subThreadSample = new SubThreadSample[50];
@@ -186,14 +191,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     protected void onResume() {
         super.onResume();
-        mGoogeleApiClient.connect();
-        sensorManager.registerListener( this, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_GAME);
-        sensorManager.registerListener( this, sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD), SensorManager.SENSOR_DELAY_GAME);
-        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(MapsActivity.this);
-        String lapseStr = pref.getString(SettingPrefActivity.PREF_KEY_LAPSE, "0.12");
-        String standardStr = pref.getString(SettingPrefActivity.PREF_KEY_STANDARD, "1013.25");
-        atmLapse = Double.parseDouble(lapseStr);
-        atmStandard = Double.parseDouble(standardStr);
+//        mGoogeleApiClient.connect();
+//        sensorManager.registerListener( this, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_GAME);
+//        sensorManager.registerListener( this, sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD), SensorManager.SENSOR_DELAY_GAME);
+//        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(MapsActivity.this);
+//        String lapseStr = pref.getString(SettingPrefActivity.PREF_KEY_LAPSE, "0.12");
+//        String standardStr = pref.getString(SettingPrefActivity.PREF_KEY_STANDARD, "1013.25");
+//        atmLapse = Double.parseDouble(lapseStr);
+//        atmStandard = Double.parseDouble(standardStr);
 
 //        mTextSensorViewThread.setPressureParam(atmStandard, atmLapse);
         Log.d(TAG, "onResume");
@@ -203,27 +208,27 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     protected void onStart() {
         super.onStart();
         System.out.println("start");
-        mSensorManager.registerListener(
-                mSensorEventListener,
-                mSensorManager.getDefaultSensor( Sensor.TYPE_ACCELEROMETER ),
-                SensorManager.SENSOR_DELAY_UI );
-        mSensorManager.registerListener(
-                mSensorEventListener,
-                mSensorManager.getDefaultSensor( Sensor.TYPE_MAGNETIC_FIELD ),
-                SensorManager.SENSOR_DELAY_UI );
+//        mSensorManager.registerListener(
+//                mSensorEventListener,
+//                mSensorManager.getDefaultSensor( Sensor.TYPE_ACCELEROMETER ),
+//                SensorManager.SENSOR_DELAY_UI );
+//        mSensorManager.registerListener(
+//                mSensorEventListener,
+//                mSensorManager.getDefaultSensor( Sensor.TYPE_MAGNETIC_FIELD ),
+//                SensorManager.SENSOR_DELAY_UI );
     }
 
     @Override
     protected void onStop() { // ⇔ onStart
         super.onStop();
 
-        mSensorManager.unregisterListener( mSensorEventListener );
+//        mSensorManager.unregisterListener( mSensorEventListener );
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        sensorManager.unregisterListener(this);
+//        sensorManager.unregisterListener(this);
 
     }
 
@@ -231,58 +236,69 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         System.out.println("create");
-        setContentView(R.layout.activity_maps);
-        initSensor();
+        setContentView(R.layout.page_fragment);
+        mSectionsPageAdapter = new SectionsPageAdapter(getSupportFragmentManager());
+
+        // Set up the ViewPager with the sections adapter.
+        mViewPager = (ViewPager) findViewById(R.id.container);
+        setupViewPager(mViewPager);
+
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+        tabLayout.setupWithViewPager(mViewPager);
+
+
+
+//        initSensor();
         testView = (TestView) findViewById(R.id.view5);
         final DirectionView directionView = (DirectionView) findViewById(R.id.direction);
         final TextView disText = (TextView) findViewById(R.id.textview);
         final TextView straightText = (TextView) findViewById(R.id.textview1);
-        disText.setTextColor(Color.RED);
-        straightText.setTextColor(Color.RED);
+//        disText.setTextColor(Color.RED);
+//        straightText.setTextColor(Color.RED);
         // NumberPicker 設定
-        final NumberPicker numberPicker = (NumberPicker)findViewById(R.id.numberPicker);
-        numberPicker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
+//        final NumberPicker numberPicker = (NumberPicker)findViewById(R.id.numberPicker);
+//        numberPicker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
 
 // 最大、最小を設定
-        numberPicker.setMaxValue(40);
-        numberPicker.setMinValue(1);
-        numberPicker.setValue(val);
+//        numberPicker.setMaxValue(40);
+//        numberPicker.setMinValue(1);
+//        numberPicker.setValue(val);
 
 // 値を取得
         //val = numberPicker.getValue();
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);  // スリープ抑制
 
-        mGoogeleApiClient = new GoogleApiClient.Builder(this)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(LocationServices.API)
-                .build();
+//        mGoogeleApiClient = new GoogleApiClient.Builder(this)
+//                .addConnectionCallbacks(this)
+//                .addOnConnectionFailedListener(this)
+//                .addApi(LocationServices.API)
+//                .build();
 
 
 
-        if (Build.VERSION.SDK_INT >= 19) {
-            Log.i(TAG, "getExternalFilesDirを呼び出します");
-            File[] extDirs = getExternalFilesDirs(Environment.DIRECTORY_DOWNLOADS);
-            File extSdDir = extDirs[extDirs.length - 1];
-            Logger.setExternalDir(extSdDir);
-            Log.i(TAG, "getExternalFilesDirが返すパス: " + extSdDir.getAbsolutePath());
-        }else{
-            Log.e(TAG, "This SDK version is under 18.");
-            finish();
-        }
+//        if (Build.VERSION.SDK_INT >= 19) {
+//            Log.i(TAG, "getExternalFilesDirを呼び出します");
+//            File[] extDirs = getExternalFilesDirs(Environment.DIRECTORY_DOWNLOADS);
+//            File extSdDir = extDirs[extDirs.length - 1];
+//            Logger.setExternalDir(extSdDir);
+//            Log.i(TAG, "getExternalFilesDirが返すパス: " + extSdDir.getAbsolutePath());
+//        }else{
+//            Log.e(TAG, "This SDK version is under 18.");
+//            finish();
+//        }
 
        mReceivedDataAdapter = new ReceivedDataAdapter(getBaseContext());
 
         //mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         LocationManager mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         Configuration config = getResources().getConfiguration();
-        mSensorAdapter = new SensorAdapter(sensorManager, mLocationManager, mReceivedDataAdapter, config);
+//        mSensorAdapter = new SensorAdapter(sensorManager, mLocationManager, mReceivedDataAdapter, config);
 
         //  sound = new Sound(getApplicationContext(), R.drawable.warn05);
 
-        mTextSensorViewThread = new TextSensorViewThread(mSensorAdapter, mReceivedDataAdapter);
-        mTextSensorViewThread.start();
+//        mTextSensorViewThread = new TextSensorViewThread(mSensorAdapter, mReceivedDataAdapter);
+//        mTextSensorViewThread.start();
         mReceivedDataAdapter.setReconnection(true);
 //        Switch connectSwitch = (Switch) findViewById(R.id.reConnectSwitch);
 //        connectSwitch.setOnCheckedChangeListener(new Switch.OnCheckedChangeListener() {
@@ -297,74 +313,74 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             mCloudLoggerService = new CloudLoggerService(url);
         }
         mCloudLoggerAdapter = new CloudLoggerAdapter(mSensorAdapter,mReceivedDataAdapter,mCloudLoggerService);
-        mCloudLoggerSendThread = new CloudLoggerSendThread(mCloudLoggerService);
-        mCloudLoggerSendThread.start();
+//        mCloudLoggerSendThread = new CloudLoggerSendThread(mCloudLoggerService);
+//        mCloudLoggerSendThread.start();
 
 
 
         //   subThreadSample[0] = new SubThreadSample("a", 100, 100);
 
-        System.out.println("ok");
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
-
-        final Button startbtn = (Button) findViewById(R.id.startbtn);
-
-        numberPicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
-            @Override
-            public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
-                val = newVal;
-                System.out.println("debug:"+val);
-            }
-        });
+//        System.out.println("ok");
+//        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+//        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+//                .findFragmentById(R.id.map);
+//        mapFragment.getMapAsync(this);
+//
+//        final Button startbtn = (Button) findViewById(R.id.startbtn);
+//
+//        numberPicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
+//            @Override
+//            public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
+//                val = newVal;
+//                System.out.println("debug:"+val);
+//            }
+//        });
 
 //        tb.setChecked(false);
 
         //ボタンが押された時の動き
         //TODO: ボタンを小さくして右上に表示
-        startbtn.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View view) {
-                if (f == 0) {
-                    startChronometer();
-                    //   subThreadSample[i].start();
-                    mStart = true;
-                    mFirst = true;
-                    mStop = false;
-                    mMeter = 0.0;
-                    mRunList.clear();
-                    f++;
-                    i=val;
-                    //val = numberPicker.getValue();
-                    // TODO: NumberPickerの廃止
-                    mCloudLoggerAdapter.setCount(val);
-                    startbtn.setText("STOP");
-                    Toast.makeText(getApplicationContext(),""+val, Toast.LENGTH_SHORT).show();
-                } else if (f == 1) {
-                    stopChronometer();
-                    mStop = true;
-                    mStart = false;
-                    // [i].stopRunning();
-                    f=0;
-                    i = 0;
-                    mCloudLoggerAdapter.setCount(0);
-                    val++;
-                    numberPicker.setValue(val);
-                    startbtn.setText("START");
-                    disText.setText("Distance:");
-                    straightText.setText("Straight:");
-                }
-            }
-        });
-
-
-        mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE );
-
-        for (int i = 0; i < 3; i++)
-            save[i] = 0;
+//        startbtn.setOnClickListener(new View.OnClickListener() {
+//
+//            @Override
+//            public void onClick(View view) {
+//                if (f == 0) {
+//                    startChronometer();
+//                    //   subThreadSample[i].start();
+//                    mStart = true;
+//                    mFirst = true;
+//                    mStop = false;
+//                    mMeter = 0.0;
+//                    mRunList.clear();
+//                    f++;
+//                    i=val;
+//                    //val = numberPicker.getValue();
+//                    // TODO: NumberPickerの廃止
+//                    mCloudLoggerAdapter.setCount(val);
+//                    startbtn.setText("STOP");
+//                    Toast.makeText(getApplicationContext(),""+val, Toast.LENGTH_SHORT).show();
+//                } else if (f == 1) {
+//                    stopChronometer();
+//                    mStop = true;
+//                    mStart = false;
+//                    // [i].stopRunning();
+//                    f=0;
+//                    i = 0;
+//                    mCloudLoggerAdapter.setCount(0);
+//                    val++;
+////                    numberPicker.setValue(val);
+//                    startbtn.setText("START");
+//                    disText.setText("Distance:");
+//                    straightText.setText("Straight:");
+//                }
+//            }
+//        });
+//
+//
+//        mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE );
+//
+//        for (int i = 0; i < 3; i++)
+//            save[i] = 0;
 
         mSensorEventListener = new SensorEventListener()
         {
@@ -420,14 +436,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 //                    // 姿勢を得る
 //                    // 回転行列をoutRにかける
 //                    MatrixMultiply(outR, rot, 3, ininR);
-
-                    SensorManager.getOrientation(
-                            mSensorAdapter.getIninR(),
-                            fAttitude );
-
-                   SensorManager.getOrientation(
-                            mSensorAdapter.getOutR(),
-                            oridinalAttitude );
+//
+//                    SensorManager.getOrientation(
+//                            mSensorAdapter.getIninR(),
+//                            fAttitude );
+//
+//                   SensorManager.getOrientation(
+//                            mSensorAdapter.getOutR(),
+//                            oridinalAttitude );
 
 
 //                    String buf =
@@ -482,21 +498,28 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         };
 
 
-        testView.setOnLongClickListener(new View.OnLongClickListener() {
-            public boolean onLongClick(View v) {
-                //testView.setPitch1(rad2deg(oridinalAttitude[1]));
-                Pitchneu = oridinalAttitude[1];
-                Rollneu = oridinalAttitude[2];
-                mSensorAdapter.setPitchneutral(Pitchneu);
-                // TODO:ロールのニュートラル調整がボタンでできてしまっていいのだろうか
-                mSensorAdapter.setRollneutral(Rollneu);
-                System.out.println("debug " + testView.getPitch1());
-                testView.invalidate();
-                System.out.println("oridinal = " + oridinalAttitude[2]);
-                System.out.println("f = " + fAttitude[2]);
-                return true; //trueの場合はonClickListenerを返さない？
-            }
-        });
+//        testView.setOnLongClickListener(new View.OnLongClickListener() {
+//            public boolean onLongClick(View v) {
+//                //testView.setPitch1(rad2deg(oridinalAttitude[1]));
+//                Pitchneu = oridinalAttitude[1];
+//                Rollneu = oridinalAttitude[2];
+//                mSensorAdapter.setPitchneutral(Pitchneu);
+//                // TODO:ロールのニュートラル調整がボタンでできてしまっていいのだろうか
+//                mSensorAdapter.setRollneutral(Rollneu);
+//                System.out.println("debug " + testView.getPitch1());
+//                testView.invalidate();
+//                System.out.println("oridinal = " + oridinalAttitude[2]);
+//                System.out.println("f = " + fAttitude[2]);
+//                return true; //trueの場合はonClickListenerを返さない？
+//            }
+//        });
+    }
+
+    private void setupViewPager(ViewPager viewPager) {
+        SectionsPageAdapter adapter = new SectionsPageAdapter(getSupportFragmentManager());
+        adapter.addFragment(new SensorTab(), "TAB1");
+        adapter.addFragment(new MapTab(), "TAB2");
+        viewPager.setAdapter(adapter);
     }
 
 //    public void MatrixMultiply(float[] R, float[] L,int sizeR/*正方行列の次元*/, float[] outM) {
@@ -534,178 +557,179 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 //    }
 
 
-    private class TextSensorViewThread extends Thread {
-        SensorAdapter mSensorAdapter;
-        ReceivedDataAdapter mReceivedDataAdapter;
-        Handler handler = new Handler(Looper.getMainLooper());
+//    private class TextSensorViewThread extends Thread {
+//        SensorAdapter mSensorAdapter;
+//        ReceivedDataAdapter mReceivedDataAdapter;
+//        Handler handler = new Handler(Looper.getMainLooper());
+//
+//        private TextView txtStatus, txtSelector;
+//        GraphView speed = (GraphView) findViewById(R.id.speed);
+//        GraphView rpm = (GraphView) findViewById(R.id.rpm);
+//        GraphView ult = (GraphView) findViewById(R.id.ult);
+//        TextView elevator = (TextView) findViewById(R.id.elevator);
+//        TextView rudder = (TextView) findViewById(R.id.rudder);
+//        TextView trim = (TextView) findViewById(R.id.trim);
+//
+//
+//        private boolean running = true;
+//
+//        private double atmStandard, atmLapse;
+//    }
 
-        private TextView txtStatus, txtSelector;
-        GraphView speed = (GraphView) findViewById(R.id.speed);
-        GraphView rpm = (GraphView) findViewById(R.id.rpm);
-        GraphView ult = (GraphView) findViewById(R.id.ult);
-        TextView elevator = (TextView) findViewById(R.id.elevator);
-        TextView rudder = (TextView) findViewById(R.id.rudder);
-        TextView trim = (TextView) findViewById(R.id.trim);
+//        public TextSensorViewThread(SensorAdapter mSensorAdapter, ReceivedDataAdapter mReceivedDataAdapter) {
+//            this.mSensorAdapter = mSensorAdapter;
+//            this.mReceivedDataAdapter = mReceivedDataAdapter;
+//
+//            txtStatus = (TextView) findViewById(R.id.textViewStatus);
+//        }
+//
+//        public void start() {
+//            new Thread(this).start();
+//            System.out.println("start");
+//        }
+//
+//        public void stopRunning() {
+//            running = false;
+//        }
+//
+//        public void setPressureParam(double atmStandard, double atmLapse) {
+//            this.atmStandard = atmStandard;
+//            this.atmLapse = atmLapse;
+//        }
+//
+//        @Override
+//        public void run() {
+//            System.out.println("TextSensorViewthread Start");
+//            try {
+//                Thread.sleep(100);
+//                System.out.println("1234567890");
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//            while (running) {
+//                handler.post(new Runnable() {
+//                    @Override
+//                    public void run() {
+//
+//                        speed.setV(mReceivedDataAdapter.getAirspeed());
+//                        rpm.setV(mReceivedDataAdapter.getCadence());
+//                        ult.setV(mReceivedDataAdapter.getUltsonic());
+//                        speed.invalidate();
+//                        rpm.invalidate();
+//                        ult.invalidate();
+//
+//                        elevator.setText("Elev: " + String.format("%.2f", mReceivedDataAdapter.getElevator()));//水平サーボの舵角
+//                        rudder.setText("Rud: " +String.format("%.2f", mReceivedDataAdapter.getRudder()));//垂直サーボの舵角
+//                        trim.setText("Trim: " +String.valueOf(mReceivedDataAdapter.getTrim()));//elevatorの舵角(ボタン)
+////                〇      txtAirspeed.setText(String.format("%.2f", mReceivedDataAdapter.getAirspeed()) + "m/s");//気速
+////                        txtCadence.setTextSize(100.0f);
+////                〇        txtCadence.setText(String.format("%.2f", mReceivedDataAdapter.getCadence()) + "RPM");//足元回転数
+////                〇        txtUltsonic.setText(String.format("%.2f", mReceivedDataAdapter.getUltsonic()));//超音波(200cmまで)
+////                        txtAtmpress.setText(String.format("%.2f", mReceivedDataAdapter.getAtmpress()));//気圧(hPa)
+//                        double altitude = -(mReceivedDataAdapter.getAtmpress() - atmStandard) / atmLapse;
+////                        txtAltitude.setText(String.format("%.2f", altitude));
+//                        switch (mReceivedDataAdapter.getState()) {
+//                            case BluetoothChatService.STATE_CONNECTED:
+//                                txtStatus.setText("Connected");
+//                                break;
+//                            case BluetoothChatService.STATE_CONNECTING:
+//                                txtStatus.setText("Connecting...");
+//                                break;
+//                            case BluetoothChatService.STATE_LISTEN:
+//                                txtStatus.setText("Listen");
+//                                break;
+//                            case BluetoothChatService.STATE_NONE:
+//                                txtStatus.setText("None");
+//                                break;
+//                        }
+////                        txtSelector.setText(String.valueOf(mReceivedDataAdapter.getSelector()));
+////                        txtCadencevolt.setText(String.valueOf(mReceivedDataAdapter.getCadencevolt()));
+////                        txtUltsonicvolt.setText(String.valueOf(mReceivedDataAdapter.getUltsonicvolt()));
+////                        txtServovolt.setText(String.valueOf(mReceivedDataAdapter.getServovolt()));
+//
+//
+//                        //sound.set(mSensorAdapter.getRoll(), 40, 60);
+//                    }
+//                });
+//                try {
+//                    Thread.sleep(200);
+//                } catch (InterruptedException e) {
+//                    Log.e(TAG, "ReConnectThread exception");
+//                } catch (Exception e) {
+//                    System.out.println(e);
+//                }
+//            }
+//        }
+//    }
 
-
-        private boolean running = true;
-
-        private double atmStandard, atmLapse;
-
-        public TextSensorViewThread(SensorAdapter mSensorAdapter, ReceivedDataAdapter mReceivedDataAdapter) {
-            this.mSensorAdapter = mSensorAdapter;
-            this.mReceivedDataAdapter = mReceivedDataAdapter;
-
-            txtStatus = (TextView) findViewById(R.id.textViewStatus);
-        }
-
-        public void start() {
-            new Thread(this).start();
-            System.out.println("start");
-        }
-
-        public void stopRunning() {
-            running = false;
-        }
-
-        public void setPressureParam(double atmStandard, double atmLapse) {
-            this.atmStandard = atmStandard;
-            this.atmLapse = atmLapse;
-        }
-
-        @Override
-        public void run() {
-            System.out.println("TextSensorViewthread Start");
-            try {
-                Thread.sleep(100);
-                System.out.println("1234567890");
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            while (running) {
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-
-                        speed.setV(mReceivedDataAdapter.getAirspeed());
-                        rpm.setV(mReceivedDataAdapter.getCadence());
-                        ult.setV(mReceivedDataAdapter.getUltsonic());
-                        speed.invalidate();
-                        rpm.invalidate();
-                        ult.invalidate();
-
-                        elevator.setText("Elev: " + String.format("%.2f", mReceivedDataAdapter.getElevator()));//水平サーボの舵角
-                        rudder.setText("Rud: " +String.format("%.2f", mReceivedDataAdapter.getRudder()));//垂直サーボの舵角
-                        trim.setText("Trim: " +String.valueOf(mReceivedDataAdapter.getTrim()));//elevatorの舵角(ボタン)
-//                〇      txtAirspeed.setText(String.format("%.2f", mReceivedDataAdapter.getAirspeed()) + "m/s");//気速
-//                        txtCadence.setTextSize(100.0f);
-//                〇        txtCadence.setText(String.format("%.2f", mReceivedDataAdapter.getCadence()) + "RPM");//足元回転数
-//                〇        txtUltsonic.setText(String.format("%.2f", mReceivedDataAdapter.getUltsonic()));//超音波(200cmまで)
-//                        txtAtmpress.setText(String.format("%.2f", mReceivedDataAdapter.getAtmpress()));//気圧(hPa)
-                        double altitude = -(mReceivedDataAdapter.getAtmpress() - atmStandard) / atmLapse;
-//                        txtAltitude.setText(String.format("%.2f", altitude));
-                        switch (mReceivedDataAdapter.getState()) {
-                            case BluetoothChatService.STATE_CONNECTED:
-                                txtStatus.setText("Connected");
-                                break;
-                            case BluetoothChatService.STATE_CONNECTING:
-                                txtStatus.setText("Connecting...");
-                                break;
-                            case BluetoothChatService.STATE_LISTEN:
-                                txtStatus.setText("Listen");
-                                break;
-                            case BluetoothChatService.STATE_NONE:
-                                txtStatus.setText("None");
-                                break;
-                        }
-//                        txtSelector.setText(String.valueOf(mReceivedDataAdapter.getSelector()));
-//                        txtCadencevolt.setText(String.valueOf(mReceivedDataAdapter.getCadencevolt()));
-//                        txtUltsonicvolt.setText(String.valueOf(mReceivedDataAdapter.getUltsonicvolt()));
-//                        txtServovolt.setText(String.valueOf(mReceivedDataAdapter.getServovolt()));
-
-
-                        //sound.set(mSensorAdapter.getRoll(), 40, 60);
-                    }
-                });
-                try {
-                    Thread.sleep(200);
-                } catch (InterruptedException e) {
-                    Log.e(TAG, "ReConnectThread exception");
-                } catch (Exception e) {
-                    System.out.println(e);
-                }
-            }
-        }
-    }
-
-    private class CloudLoggerSendThread extends Thread{
-        CloudLoggerService mCloudLoggerService;
-        Handler handler = new Handler();
-        private boolean running = true;
-        public CloudLoggerSendThread(CloudLoggerService mCloudLoggerService){
-            this.mCloudLoggerService = mCloudLoggerService;
-        }
-        public void start(){
-            new Thread(this).start();
-        }
-        public void stopRunning() {
-            running = false;
-        }
-        @Override
-        public void run(){
-            while(running) {
-                while (i != 0) {
-                    // TODO: EXEPTION !!!
-
-                    try {
-                        mCloudLoggerAdapter.setPitchneu(Pitchneu);
-                        mCloudLoggerService.send();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-
-                    try {
-                        Thread.sleep(600);
-                    } catch (InterruptedException e) {
-                        Log.e(TAG, "CloudLoggerSendThread exception");
-                    }
-                }
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    Log.e(TAG, "CloudLoggerSendThread exception");
-                }
-            }
-        }
-
-    }
+//    private class CloudLoggerSendThread extends Thread{
+//        CloudLoggerService mCloudLoggerService;
+//        Handler handler = new Handler();
+//        private boolean running = true;
+//        public CloudLoggerSendThread(CloudLoggerService mCloudLoggerService){
+//            this.mCloudLoggerService = mCloudLoggerService;
+//        }
+//        public void start(){
+//            new Thread(this).start();
+//        }
+//        public void stopRunning() {
+//            running = false;
+//        }
+//        @Override
+//        public void run(){
+//            while(running) {
+//                while (i != 0) {
+//                    // TODO: EXEPTION !!!
+//
+//                    try {
+//                        mCloudLoggerAdapter.setPitchneu(Pitchneu);
+//                        mCloudLoggerService.send();
+//                    } catch (Exception e) {
+//                        e.printStackTrace();
+//                    }
+//
+//                    try {
+//                        Thread.sleep(600);
+//                    } catch (InterruptedException e) {
+//                        Log.e(TAG, "CloudLoggerSendThread exception");
+//                    }
+//                }
+//                try {
+//                    Thread.sleep(1000);
+//                } catch (InterruptedException e) {
+//                    Log.e(TAG, "CloudLoggerSendThread exception");
+//                }
+//            }
+//        }
+//
+//    }
 
     private float rad2deg( float rad ) {
         return rad * (float) 180.0 / (float) Math.PI;
     }
 
-    protected void initSensor(){
-        sensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);
-    }
+//    protected void initSensor(){
+//        sensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);
+//    }
 
     @Override
     protected void onDestroy() {
         // TODO: Destroy時にアプリが落ちないようにする
         super.onDestroy();
-        System.out.println("スレッド終了");
-        mTextSensorViewThread.stopRunning();
-        System.out.println("1");
-        mCloudLoggerSendThread.stopRunning();
-        System.out.println("2");
-        //mCloudLoggerAdapter.stoplogger();
-        //sound.release();
-        System.out.println("3");
-        mReceivedDataAdapter.stop();
-        System.out.println("4");
-        mSensorAdapter.stopSensor();
-        System.out.println("5");
-        mCloudLoggerService.close();
-        System.out.println("6");
+//        System.out.println("スレッド終了");
+//        mTextSensorViewThread.stopRunning();
+//        System.out.println("1");
+//        mCloudLoggerSendThread.stopRunning();
+//        System.out.println("2");
+//        //mCloudLoggerAdapter.stoplogger();
+//        //sound.release();
+//        System.out.println("3");
+//        mReceivedDataAdapter.stop();
+//        System.out.println("4");
+//        mSensorAdapter.stopSensor();
+//        System.out.println("5");
+//        mCloudLoggerService.close();
+//        System.out.println("6");
 //        try{
 //            wait(6000);
 //        } catch (Exception e){
@@ -725,18 +749,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
      * installed Google Play services and returned to the app.
      */
 
-    private void startChronometer() {
-        mChronometer = (Chronometer) findViewById(R.id.chronometer);
-        mChronometer.setBase(SystemClock.elapsedRealtime());
-        mChronometer.start();
-        mStartTimeMillis = System.currentTimeMillis();
-    }
-
-    private void stopChronometer() {
-        mChronometer.stop();
-        //ミリ秒
-        mElapsedTime = SystemClock.elapsedRealtime() - mChronometer.getBase();
-    }
+//    private void startChronometer() {
+//        mChronometer = (Chronometer) findViewById(R.id.chronometer);
+//        mChronometer.setBase(SystemClock.elapsedRealtime());
+//        mChronometer.start();
+//        mStartTimeMillis = System.currentTimeMillis();
+//    }
+//
+//    private void stopChronometer() {
+//        mChronometer.stop();
+//        //ミリ秒
+//        mElapsedTime = SystemClock.elapsedRealtime() - mChronometer.getBase();
+//    }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -764,24 +788,23 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // MyLocationButtonを有効に
         UiSettings settings = mMap.getUiSettings();
         settings.setMyLocationButtonEnabled(true);
-//        UiSettings settings = mMap.getUiSettings();
-//
-//        settings.setCompassEnabled(true);
-//        //ズームイン・アウトボタンの有効化
-//        settings.setZoomControlsEnabled(true);
-//        //回転ジェスチャーの有効化
-//        settings.setRotateGesturesEnabled(true);
-//        //スクロールジェスチャーの有効化
-//        settings.setScrollGesturesEnabled(true);
-//        //Tlitジェスチャーの有効化
-//        settings.setTiltGesturesEnabled(true);
-//        //ズームジェスチャーの有効化
-//        settings.setZoomGesturesEnabled(true);
-//
-//        //マップの種類
+
+        settings.setCompassEnabled(true);
+        //ズームイン・アウトボタンの有効化
+        settings.setZoomControlsEnabled(true);
+        //回転ジェスチャーの有効化
+        settings.setRotateGesturesEnabled(true);
+        //スクロールジェスチャーの有効化
+        settings.setScrollGesturesEnabled(true);
+        //Tlitジェスチャーの有効化
+        settings.setTiltGesturesEnabled(true);
+        //ズームジェスチャーの有効化
+        settings.setZoomGesturesEnabled(true);
+
+        //マップの種類
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-        //衛星写真
-//        mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
+//        衛星写真
+        mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
 
         circleOptions = new CircleOptions()
         .center(Platform)
@@ -804,8 +827,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.addCircle(circleOptions);
         mMap.addCircle(circleOptions1);
 
-            // DangerousなPermissionはリクエストして許可をもらわないと使えない(Android6以降？)
-//        if (ActivityCompat.checkSelfPermission(this, Manifest.permisson.ACCESS_FINE_LOCATION) !=
+//             DangerousなPermissionはリクエストして許可をもらわないと使えない(Android6以降？)
+//        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) !=
 //                PackageManager.PERMISSION_GRANTED) {
 //            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
 //                    Manifest.permission.ACCESS_FINE_LOCATION)) {
@@ -816,7 +839,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 //                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
 //                            @Override
 //                            public void onClick(DialogInterface dialogInterface, int i) {
-//                                showToastShort("GPS使えへんがな");
+////                                showToastShort("GPS使えへんがな");
 //                            }
 //                        })
 //                        .show();
@@ -833,38 +856,38 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 //    }
 
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode) {
-            case MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION: {
-                // ユーザーが許可したとき
-                // 許可が必要な機能を改めて実行する
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    //
-                } else {
-                    // ユーザーが許可しなかったとき
-                    // 許可されなかったため機能が実行できないことを表示する
-                    //showToastShort("GPS機能が使えないので地図は動きません");
-                    // 以下は、java.lang.RuntimeExceptionになる
-                    // mMap.setMyLocationEnabled(true)
-                }
-                return;
-            }
-            case MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STRAGE: {
-                // userが許可
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // saveConfirmDialog();
-                } else {
-                    // userが許可しない
-                    //showToastShort("外部へのファイルの保存が許可されなかったので、きろくできません");
-                }
-                return;
-            }
-        }
-    }
-
-
+//    @Override
+//    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+//        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+//        switch (requestCode) {
+//            case MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION: {
+//                // ユーザーが許可したとき
+//                // 許可が必要な機能を改めて実行する
+//                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//                    //
+//                } else {
+//                    // ユーザーが許可しなかったとき
+//                    // 許可されなかったため機能が実行できないことを表示する
+//                    //showToastShort("GPS機能が使えないので地図は動きません");
+//                    // 以下は、java.lang.RuntimeExceptionになる
+//                    // mMap.setMyLocationEnabled(true)
+//                }
+//                return;
+//            }
+//            case MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STRAGE: {
+//                // userが許可
+//                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//                    // saveConfirmDialog();
+//                } else {
+//                    // userが許可しない
+//                    //showToastShort("外部へのファイルの保存が許可されなかったので、きろくできません");
+//                }
+//                return;
+//            }
+//        }
+//    }
+//
+//
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         mFusedLocationProviderApi.requestLocationUpdates(mGoogeleApiClient, REQUEST, (LocationListener) this);
@@ -911,218 +934,118 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         mMap.addMarker(new MarkerOptions().position(Platform));
 
-        if (mStart) {
-            if (mFirst) {
-                // TODO: 初めのzoom値の変更
-                CameraPosition cameraposition = new CameraPosition.Builder()
-                        .target(new LatLng(location.getLatitude(), location.getLongitude())).zoom(18)
-                        .bearing(0).build();
-                mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraposition));
-                Bundle args = new Bundle();
-                args.putDouble("lat", location.getLatitude());
-                args.putDouble("lon", location.getLongitude());
-                System.out.println("debug");
-                System.out.println(location.getLatitude());
-
-                //getLoaderManager().restartLoader(ADDRESSLOADER_ID, args, this);
-                mFirst = !mFirst;
-            } else {
-                //移動線を描画
-                drawTrace(latlng);
-                //走行距離を累積
-                sumDistance();
-
-                // TODO: 竹生島と沖島への直線を描画
-                PolylineOptions OkiOptions = new PolylineOptions()
-                        .add(latlng)
-                        .add(Oki)
-                        .width(4);
-
-                PolylineOptions ChikubuOptions = new PolylineOptions()
-                        .add(latlng)
-                        .add(Chikubu)
-                        .width(4);
-
-                mMap.addPolyline(OkiOptions);
-                mMap.addPolyline(ChikubuOptions);
-
-                Location.distanceBetween(Platform.latitude,Platform.longitude, latlng.latitude, latlng.longitude, dista);
-                currentCircle.radius(dista[0]);
-                mMap.addCircle(currentCircle);
-
-            }
-        }
+//        if (mStart) {
+//            if (mFirst) {
+//                // TODO: 初めのzoom値の変更
+//                CameraPosition cameraposition = new CameraPosition.Builder()
+//                        .target(new LatLng(location.getLatitude(), location.getLongitude())).zoom(18)
+//                        .bearing(0).build();
+//                mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraposition));
+//                Bundle args = new Bundle();
+//                args.putDouble("lat", location.getLatitude());
+//                args.putDouble("lon", location.getLongitude());
+//                System.out.println("debug");
+//                System.out.println(location.getLatitude());
+//
+//                //getLoaderManager().restartLoader(ADDRESSLOADER_ID, args, this);
+//                mFirst = !mFirst;
+//            } else {
+//                //移動線を描画
+//                drawTrace(latlng);
+//                //走行距離を累積
+//                sumDistance();
+//
+//                // TODO: 竹生島と沖島への直線を描画
+//                PolylineOptions OkiOptions = new PolylineOptions()
+//                        .add(latlng)
+//                        .add(Oki)
+//                        .width(4);
+//
+//                PolylineOptions ChikubuOptions = new PolylineOptions()
+//                        .add(latlng)
+//                        .add(Chikubu)
+//                        .width(4);
+//
+//                mMap.addPolyline(OkiOptions);
+//                mMap.addPolyline(ChikubuOptions);
+//
+//                Location.distanceBetween(Platform.latitude,Platform.longitude, latlng.latitude, latlng.longitude, dista);
+//                currentCircle.radius(dista[0]);
+//                mMap.addCircle(currentCircle);
+//
+//            }
+//        }
     }
-
-    private void drawTrace(LatLng latlng) {
-        mRunList.add(latlng);
-        if (mRunList.size() > 1) {
-            PolylineOptions polyOptions = new PolylineOptions();
-            for (LatLng polyLatLng : mRunList) {
-                polyOptions.add(polyLatLng);
-            }
-            polyOptions.color(Color.RED);
-            polyOptions.width(3.5f);
-            polyOptions.geodesic(false);
-            mMap.addPolyline(polyOptions);
-        }
-    }
-
-    private void sumDistance() {
-        if (mRunList.size() < 2) {
-            return;
-        }
-        // 累計距離
-        mMeter = 0.0;
-        float[] results = new float[3];
-        // Straight distance
-        StraightMeter = 0.0;
-        float[] straight = new float[3];
-
-
-        int i = 1;
-        while (i < mRunList.size()) {
-            results[0] = 0;
-            Location.distanceBetween(mRunList.get(i - 1).latitude, mRunList.get(i - 1).longitude,
-                    mRunList.get(i).latitude, mRunList.get(i).longitude, results);
-            Location.distanceBetween(mRunList.get(0).latitude, mRunList.get(0).longitude, mRunList.get(i).latitude, mRunList.get(i).longitude, straight);
-
-            mMeter += results[0];
-            StraightMeter = straight[0];
-
-            i++;
-        }
-        //distanceBetweenの距離はメートル単位
-        //double disMeter = mMeter / 1000;
-        TextView DisText = (TextView) findViewById(R.id.textview);
-        TextView StraightText = (TextView) findViewById(R.id.textview1);
-        DisText.setTextColor(Color.RED);
-        StraightText.setTextColor(Color.RED);
-        DisText.setText(String.format("Distance: " + "%.1f" + " m", mMeter));
-        StraightText.setText(String.format("Straight: " + "%.1f" + " m", StraightMeter));
-    }
-
+//
+//    private void drawTrace(LatLng latlng) {
+//        mRunList.add(latlng);
+//        if (mRunList.size() > 1) {
+//            PolylineOptions polyOptions = new PolylineOptions();
+//            for (LatLng polyLatLng : mRunList) {
+//                polyOptions.add(polyLatLng);
+//            }
+//            polyOptions.color(Color.RED);
+//            polyOptions.width(3.5f);
+//            polyOptions.geodesic(false);
+//            mMap.addPolyline(polyOptions);
+//        }
+//    }
+//
+//    private void sumDistance() {
+//        if (mRunList.size() < 2) {
+//            return;
+//        }
+//        // 累計距離
+//        mMeter = 0.0;
+//        float[] results = new float[3];
+//        // Straight distance
+//        StraightMeter = 0.0;
+//        float[] straight = new float[3];
+//
+//
+//        int i = 1;
+//        while (i < mRunList.size()) {
+//            results[0] = 0;
+//            Location.distanceBetween(mRunList.get(i - 1).latitude, mRunList.get(i - 1).longitude,
+//                    mRunList.get(i).latitude, mRunList.get(i).longitude, results);
+//            Location.distanceBetween(mRunList.get(0).latitude, mRunList.get(0).longitude, mRunList.get(i).latitude, mRunList.get(i).longitude, straight);
+//
+//            mMeter += results[0];
+//            StraightMeter = straight[0];
+//
+//            i++;
+//        }
+//        //distanceBetweenの距離はメートル単位
+//        //double disMeter = mMeter / 1000;
+//        TextView DisText = (TextView) findViewById(R.id.textview);
+//        TextView StraightText = (TextView) findViewById(R.id.textview1);
+////        DisText.setTextColor(Color.RED);
+////        StraightText.setTextColor(Color.RED);
+//        DisText.setText(String.format("Distance: " + "%.1f" + " m", mMeter));
+//        StraightText.setText(String.format("Straight: " + "%.1f" + " m", StraightMeter));
+//    }
+//
     @Override
     public void onSensorChanged(SensorEvent event) {
-        switch(event.sensor.getType()){
-            case Sensor.TYPE_MAGNETIC_FIELD:
-                geomagnetic = event.values.clone();
-                break;
-            case Sensor.TYPE_ACCELEROMETER:
-                gravity = event.values.clone();
-                break;
-        }
-        if(geomagnetic != null && gravity != null){
-            SensorManager.getRotationMatrix( rotationMatrix, null, gravity, geomagnetic);
-            SensorManager.getOrientation( rotationMatrix, attitude);
-//            YawText.setText(Integer.toString( (int)(attitude[0] * RAD2DEG)));
-//            PitchText.setText(Integer.toString( (int)(attitude[1] * RAD2DEG)));
-//            RollText.setText(Integer.toString( (int)(attitude[2] * RAD2DEG)));
-        }
+//        switch(event.sensor.getType()){
+//            case Sensor.TYPE_MAGNETIC_FIELD:
+//                geomagnetic = event.values.clone();
+//                break;
+//            case Sensor.TYPE_ACCELEROMETER:
+//                gravity = event.values.clone();
+//                break;
+//        }
+//        if(geomagnetic != null && gravity != null){
+//            SensorManager.getRotationMatrix( rotationMatrix, null, gravity, geomagnetic);
+//            SensorManager.getOrientation( rotationMatrix, attitude);
+////            YawText.setText(Integer.toString( (int)(attitude[0] * RAD2DEG)));
+////            PitchText.setText(Integer.toString( (int)(attitude[1] * RAD2DEG)));
+////            RollText.setText(Integer.toString( (int)(attitude[2] * RAD2DEG)));
+//        }
     }
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int i) {
         // do nothing
     }
-
-//    public class SubThreadSample extends Thread {
-//        private String myName;    //名前
-//        private long mySpan;      //周期
-//        private int myloopCount;  //ループ回数
-//        //GraphView graphView; //ビュー
-//        //float v = 0;
-//
-//        final Handler handler = new Handler();
-//        GraphView graphView = (GraphView) findViewById(R.id.view);
-//        GraphView graphView1 = (GraphView) findViewById(R.id.view1);
-//        //        GraphView graphView2 = (GraphView) findViewById(R.id.view2);
-//        GraphView graphView3 = (GraphView) findViewById(R.id.view3);
-//        GraphView graphView4 = (GraphView) findViewById(R.id.view4);
-//
-//        //コンストラクタ
-//        public SubThreadSample(String name, long span, int loopCount) {
-//            myName = name;
-//            mySpan = span;
-//            myloopCount = loopCount;
-//            runflg = true;
-//            graphView.v = 0;
-//            graphView1.v = 0;
-////            graphView2.v = 0;
-//            graphView3.v = 0;
-//            graphView4.v = 0;
-//            //graphView = graphView1;
-//            //graphView.x0 = x0;
-//            //graphView.y0 = y0;
-//            //graphView.vmin = vmin;
-//            //graphView.vmax = vmax;
-//            //graphView.unit = unit;
-//            //graphView.title = title;
-//            //graphView.invalidate();
-//        }
-//
-//        //SubThreadSample.java
-//        public void run() {
-//            while (runflg) {
-//
-//                try {
-//                    Thread.sleep(100);
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//
-//                //int v = 0;
-//                handler.post(new Runnable() {
-//                    @Override
-//                    public void run() {
-//
-//
-//                        graphView.v++;
-//                        graphView.invalidate();
-//                        //System.out.println("debug" + graphView.v);
-//
-//                        graphView1.v += 5;
-//                        graphView1.invalidate();
-//                        //System.out.println("debug" + graphView1.v);
-//
-////                        graphView2.v += 3;
-////                        graphView2.invalidate();
-//                        //System.out.println("debug" + graphView2.v);
-//
-//                        graphView3.v += 4;
-//                        graphView3.invalidate();
-//                        //System.out.println("debug" + graphView3.v);
-//
-//                        graphView4.v += 10;
-//                        graphView4.invalidate();
-//                        //System.out.println("debug" + graphView4.v);
-//
-//                    }
-//                });
-//
-//                try {
-//                    Thread.sleep(100);
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//                if (runflg == false) {
-//                    break;
-//                }
-//            }
-//
-//            runflg = false;
-//        }
-//
-//
-//        public void stopRunning() {
-//            runflg = false;
-//        }
-//    /*public void setValue(float v){
-//        this.v = v;
-//    }*/
-//    }
-//    private void showToastShort(String textToShow) {
-//        mLongToast.setText(textToShow);
-//        mLongToast.show();
-//    }
 }
