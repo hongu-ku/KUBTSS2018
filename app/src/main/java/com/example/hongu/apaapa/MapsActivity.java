@@ -515,6 +515,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 //        });
     }
 
+    // PageAdapterにlayoutファイルに紐づいたクラスを追加
     private void setupViewPager(ViewPager viewPager) {
         SectionsPageAdapter adapter = new SectionsPageAdapter(getSupportFragmentManager());
         adapter.addFragment(new SensorTab(), "TAB1");

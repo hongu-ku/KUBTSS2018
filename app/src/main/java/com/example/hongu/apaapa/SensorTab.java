@@ -4,6 +4,7 @@ package com.example.hongu.apaapa;
  * Created by hongu on 2018/05/17.
  */
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -23,6 +24,8 @@ import android.widget.Toast;
 
 public class SensorTab extends Fragment{
 
+    private GraphView speed, rpm, ultsonic, power;
+
     private TextSensorViewThread mTextSensorViewThread;//テキスト形式のUI用スレッド
 
     @Nullable
@@ -30,15 +33,42 @@ public class SensorTab extends Fragment{
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.sensor_tab,container,false);
 
-        GraphView speed = (GraphView) view.findViewById(R.id.speed);
-        GraphView rpm = (GraphView) view.findViewById(R.id.rpm);
-        GraphView ult = (GraphView) view.findViewById(R.id.ult);
+        speed = (GraphView) view.findViewById(R.id.speed);
+        rpm = (GraphView) view.findViewById(R.id.rpm);
+        ultsonic = (GraphView) view.findViewById(R.id.ult);
+        power = (GraphView) view.findViewById(R.id.power);
 
         return view;
     }
 
-    private startThread() {
 
+}
+
+public class MyAsyncTask extends AsyncTask<Integer, Integer, Integer> {
+
+    @Override
+    protected void onPreExecute() {
+        //バックグラウンド処理開始前にUIスレッドで実行される。
+        //ダイアログの生成などを行う。
+    }
+
+    @Override
+    protected Integer doInBackground(Integer... params) {
+        //バックグラウンドで処理させる内容をここで記述。
+        //AsyncTaskを使うにあたって、このメソッドの中身は必ず記述しなければいけない。
+    }
+
+    @Override
+    protected void onProgressUpdate(Integer... values) {
+        //doInBackgroundの実行中にUIスレッドで実行される。
+        //引数のvaluesを使ってプログレスバーの更新などをする際は、ここに記述する。
+    }
+
+    @Override
+    protected void onPostExecute(Integer result) {
+        //doInBackgroundが終了するとUIスレッドで実行される。
+        //ダイアログの消去などを行う。
+        //doInBackgroundの結果を画面表示に反映させる処理もここに記述。
     }
 }
 
